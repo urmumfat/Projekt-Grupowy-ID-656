@@ -1,0 +1,38 @@
+Komponenty:
+
+1. Jetson nano:
+	- dokumentacja:
+		https://developer.nvidia.com/embedded/downloads?utm_source=chatgpt.com
+		
+2. RPLiDAR A1M8-R6 360
+	https://botland.com.pl/skanery-laserowe/19625-skaner-laserowy-rplidar-a1m8-r6-360-stopni-12m-seeedstudio-114992561-5904422369248.html
+
+	https://www.seeedstudio.com/RPLiDAR-A1M8-R6-360-Degree-Laser-Scanner-Kit-12M-Range-p-4785.html
+
+3. SB Pi Motor Shield SKU 08001
+	https://shop.sb-components.co.uk/products/motorshield-for-raspberry-pi?srsltid=AfmBOooAgAVC0rl0FEI1vnMnD5DGeadM5-SKsSsSMfSoZiGeA6-qi50X
+
+4. Chassis Round 2WD (podstawek i kułka)
+	https://botland.com.pl/podwozia-robotow/7243-chassis-round-2wd-2-kolowe-podwozie-robota-z-napedem-5904422310028.html
+
+5. Waveshare Ups Module 3S Eu Moduł Zasilacza Bezprzerwowego Ups
+	https://www.ceneo.pl/182362375#tab=spec
+	https://botland.com.pl/zasilanie-nvidia/19045-zasilacz-awaryjny-ups-modul-zasilajacy-do-jetson-nano-5v-waveshare-18307-5904422366704.html	
+
+	XH 2.54 - 2 piny
+
+6. Raspberry Pi ???
+
+	
+
+##.BeagleBone® AI-64
+	https://www.beagleboard.org/boards/beaglebone-ai-64
+
+
+########################################################################
+
+!!! potrzebne kable:
+
+XH 2.54-2piny --> jack (do zasilenia jetsona z baterii)
+usb --> mikro usb (jetson do lidara)
+lidar --> lidar
