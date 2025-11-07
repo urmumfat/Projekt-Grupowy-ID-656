@@ -1,14 +1,12 @@
-Linki od Smulko:
-
-1. Beaglebone AI 64 
-	https://medium.com/@hypnotriod/building-simple-beaglebone-ai-64-based-bot-in-go-0f3023c68ad0
-
-2. Nvidia Jetson Nano 
+Nvidia Jetson Nano Project
 	https://www.waveshare.com/wiki/JetBot_ROS_AI_Kit
 
-3. bardziej wydajny Nvidia Jetson Orin Nano (niedawno pojawił się na rynku) 
-	https://www.nvidia.com/pl-pl/autonomous-machines/embedded-systems/jetson-orin/nano-super-developer-kit/
+Beaglebone AI 64 
+	https://medium.com/@hypnotriod/building-simple-beaglebone-ai-64-based-bot-in-go-0f3023c68ad0
 
+
+ROS2 Tutorial: Humble Nvidia Jetson Nano and RPLidar Interfacing for Autonomous Robotics
+	https://www.youtube.com/watch?v=IRtIurWqNLk
 
 
 

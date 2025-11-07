@@ -1,0 +1,18 @@
+- lidar sczytywanie danych
+- lidar przetwarzanie danych (tworzenie danych)
+- wyznaczanie trasy na podstawie mapy - autonomiczne poruszanie się
+- złożenie komponentów w całość
+- napisanie programów do poruszania się na STM32
+- napisanie programów do obsługi czujników na STM32
+- skonfigurowanie kontaktu mikrokontrolera z ROS2
+- skonfigurowanie kontatku Jetson nano z mikrokontrolerem
+
+
+- dodanie czujnika dymu, moduł 9-DoF IMU
+- stworzenie customowej płytki z mikrokontrolerem i czujnikami
+- stworzenie dedykowanego kontrolera
+- dodanie kamery
+- dodanie karty sieciowej Wi-Fi na USB, stworzenie sieci Wi-Fi komunikacji z komputerem
+- wyświetlenie podglądu z kamery na ekranie komputera 
+- dodanie ekranu oled (np. z baterią)
+- dodanie pobocznych funkcjonalności np. 
