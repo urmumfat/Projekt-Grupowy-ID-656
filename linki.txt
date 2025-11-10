@@ -8,6 +8,5 @@ Beaglebone AI 64
 ROS2 Tutorial: Humble Nvidia Jetson Nano and RPLidar Interfacing for Autonomous Robotics
 	https://www.youtube.com/watch?v=IRtIurWqNLk
 
-
-
-
+Presentation for AREX - to edit (add components, sum up, CHANGE COLOUR TO BEŻOWY - I cant :/)
+	https://pgedupl-my.sharepoint.com/:p:/g/personal/s197986_student_pg_edu_pl/ERkQ7JbPkKFHpJbQeV5a53sBG-VFLe28Z_E_H21jAtFvGQ?e=yMet4m
