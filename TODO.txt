@@ -1,7 +1,5 @@
-Przed arexem:
+TO DO:
 - wyszukać cokolwiek więcej odnośnie kamerek
-- mikrokontrolery do listy
-
 
 
 

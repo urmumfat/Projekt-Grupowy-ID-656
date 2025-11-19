@@ -8,7 +8,7 @@
 - skonfigurowanie kontatku Jetson nano z mikrokontrolerem
 
 
-- dodanie czujnika dymu, moduł 9-DoF IMU
+- dodanie dodatkowych czujników ???
 - stworzenie customowej płytki z mikrokontrolerem i czujnikami
 - stworzenie dedykowanego kontrolera
 - dodanie kamery
