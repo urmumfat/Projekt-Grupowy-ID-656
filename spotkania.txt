@@ -6,3 +6,8 @@
 
 07.11.2025 - spotkanie grupowe - podział pracy, zapoznanie się z komponentami, spisanie kosztorysu
 
+10.11.2025 - spotkanie grupowe (A,Mc) - napisanie wstępnych programów na STM32
+
+15.11.2025 - spotkanie grupowe (A,K) - instalacja i zapoznanie się z linuxem, próba instalacji ROS2
+
+17.11.2025 - spotkanie grupowe (A,K,Mt) - dalsza walka z linuxem i ROS2, testowanie sterownika do silników z STM32s
