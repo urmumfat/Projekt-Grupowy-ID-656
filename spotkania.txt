@@ -14,4 +14,10 @@
 
 17.11.2025 - spotkanie grupowe (A,K,Mt) - dalsza walka z linuxem i ROS2, testowanie sterownika do silników z STM32s
 
-20.11.2025 - spotaknie z klientem - 
+20.11.2025 - spotaknie z klientem (wszy)- wyjazd do firmy AREX wraz z kołem studenckim CHIP, prezentacja i zwiedzanie firmy, prezentacja szczegółów projektu i omówienie szczegółów co do finansowania i dalszego funkcjownowania
+
+23.11.2025 - spotkanie grupowe (A, Mc) - złożenie układu z mikrokontrolerem, czujnikami, sterownikiem i silnikami, skonfigurowanie i test silników, walka ze sterownikiem
+
+28.11.2025 - spotkanie z prowadzącym (A, K) - wyjaśnienie wątpliwości co do sterownika, ustalenie dalszego planu działania co do doboru części
+
+03.12.2025 - spotkanie grupowe (wszy) - 
