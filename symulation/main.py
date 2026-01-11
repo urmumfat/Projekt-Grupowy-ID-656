@@ -48,11 +48,25 @@ Wzory:
 """
 
 #pomiary z czujników
-dataFromLeftWheel = np.array([1,1,1,1,1]) #obr/s
-dataFromRightWheel = np.array([1,1,1,1,1]) #obr/s
+# Generowanie danych (400 próbek = 4 sekundy symulacji)
+# Etap 1: Prosto (obie prędkości 1.0 obr/s)
+left_1 = np.ones(100) * 1.0
+right_1 = np.ones(100) * 1.0
+
+# Etap 2: Skręt w lewo (Lewe zwalnia do 0.8, Prawe przyspiesza do 1.5)
+left_2 = np.ones(200) * 0.8
+right_2 = np.ones(200) * 1.5
+
+# Etap 3: Prosto (obie prędkości 1.0 obr/s)
+left_3 = np.ones(100) * 1.0
+right_3 = np.ones(100) * 1.0
+
+# Łączenie w gotowe wektory
+dataFromLeftWheel = np.concatenate([left_1, left_2, left_3])
+dataFromRightWheel = np.concatenate([right_1, right_2, right_3])
 dataFromAccelerator = np.array([])
 dataFromGyroscope = np.array([])
-timeStep = 0.2 #czas co jaki pobierana jest wartosc z czujników
+timeStep = 0.01 #czas co jaki pobierana jest wartosc z czujników
 radiusOfWheel = 5 #cm
 distanceBetweenwheels = 20 #cm
 
@@ -76,11 +90,11 @@ phi = np.array([90]) #stopnie
 for i in range(len(dataFromLeftWheel)):
 
     #theta = (d_r - d_l)/b
-    theta = (vecTemporaryDistanceRW[i]-vecTemporaryDistanceRW[i])/distanceBetweenwheels
+    theta = (vecTemporaryDistanceRW[i]-vecTemporaryDistanceLW[i])/distanceBetweenwheels
     phi = np.append(phi,phi[i]+theta)
 
     #d_c = (d_l +d_r)/2
-    d_c = (vecTemporaryDistanceRW[i]+vecTemporaryDistanceRW[i])/2
+    d_c = (vecTemporaryDistanceRW[i]+vecTemporaryDistanceLW[i])/2
 
     d_x = d_c * np.cos((phi[i]+theta)*(np.pi/180))
     d_y = d_c * np.sin((phi[i]+theta)*(np.pi/180))
