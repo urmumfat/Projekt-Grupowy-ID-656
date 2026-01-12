@@ -48,21 +48,27 @@ Wzory:
 
 """
 
-#pomiary z czujników
-# Generowanie danych (400 próbek = 4 sekundy symulacji)
-# Etap 1: Prosto (obie prędkości 1.0 obr/s)
+# Konfiguracja czasu (tak jak miałeś ostatnio)
+timeStep = 0.01
+
+# --- Etap 1: Jazda prosto (1 sekunda / 100 próbek) ---
+# Obie strony jadą z prędkością 1.0 obr/s
 left_1 = np.ones(100) * 1.0
 right_1 = np.ones(100) * 1.0
 
-# Etap 2: Skręt w lewo (Lewe zwalnia do 0.8, Prawe przyspiesza do 1.5)
-left_2 = np.ones(200) * 0.8
-right_2 = np.ones(200) * 1.5
+# --- Etap 2: Obrót w miejscu w lewo (1.5 sekundy / 150 próbek) ---
+# Żeby obrócić się w miejscu (nie zmieniając pozycji x,y):
+# Lewe koło musi cofać (-0.5), Prawe jechać do przodu (0.5)
+left_2 = np.ones(200) * -15
+right_2 = np.ones(200) * 15
 
-# Etap 3: Prosto (obie prędkości 1.0 obr/s)
-left_3 = np.ones(100) * 1.0
-right_3 = np.ones(100) * 1.0
+# --- Etap 3: Łuk w prawo (2 sekundy / 200 próbek) ---
+# Żeby skręcać w prawo jadąc do przodu:
+# Lewe koło musi pokonywać większy dystans (zewnętrzne) niż prawe (wewnętrzne)
+left_3 = np.ones(200) * 1.5  # Szybko
+right_3 = np.ones(200) * 0.8 # Wolniej
 
-# Łączenie w gotowe wektory
+# --- Łączenie danych ---
 dataFromLeftWheel = np.concatenate([left_1, left_2, left_3])
 dataFromRightWheel = np.concatenate([right_1, right_2, right_3])
 dataFromAccelerator = np.array([])
@@ -102,7 +108,7 @@ for i in range(len(dataFromLeftWheel)):
     posX = np.append(posX,posX[i]+d_x)
     posY = np.append(posY,posY[i]+d_y)
 
-    print(f"postura: (x:{posX[i]}, y:{posY[i]}, phi:{phi[i]}), d_x = {d_x}, d_y = {d_y}, theta = {theta}",end='\n')
+    print(f"postura: (x:{posX[i]}, y:{posY[i]}, phi:{phi[i]})",end='\n')
 
 
 #wizulaizacjas
