@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 """
 Obliczenia zmiany położenie robota: odometria
@@ -105,10 +106,39 @@ for i in range(len(dataFromLeftWheel)):
 
 
 #wizulaizacjas
-plt.figure(figsize=(8,8))
-plt.plot(posX,posY,label='Wizualizacja przemieszczenia sie robota')
-plt.grid()
+fig,ax = plt.subplots(figsize=(8,8))
+
+margin = 20
+ax.set_xlim(min(posX)-margin, max(posX)+margin)
+ax.set_ylim(min(posY)-margin, max(posY)+margin)
+
+ax.set_aspect('equal')
+ax.grid(True)
+ax.set_title("Wizulaziacja ruchu robota")
+ax.set_xlabel("X [cm]")
+ax.set_ylabel("Y [cm]")
+
+robotPath, = ax.plot([],[],'b-',linewidth = 1, label='Ścierzka')
+pathPoints, = ax.plot([],[],'ro',markersize = 8, label='Ścierzka')
+robotNose, = ax.plot([],[],'r-',linewidth = 2)
+
+plt.legend()
+
+def update(frame):
+
+    robotPath.set_data(posX[:frame], posY[:frame])
+    pathPoints.set_data([posX[frame]],[posY[frame]])
+
+    noseLenght = 5 #cm
+    noseCorner = np.radians(phi[frame])
+
+    noseX = posX[frame] + noseLenght * np.cos(noseCorner)
+    noseY = posY[frame] + noseLenght * np.sin(noseCorner)
+
+    robotNose.set_data([posX[frame],noseX],[posY[frame],noseY])
+
+    return robotPath, pathPoints, robotNose
+
+animation = FuncAnimation(fig,update,frames = len(posX),interval = 20, blit=True)
+
 plt.show()
-
-
-
