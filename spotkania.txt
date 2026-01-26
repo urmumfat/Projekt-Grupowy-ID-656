@@ -26,4 +26,6 @@
 
 14.01.2025 - spotkanie grupowe (Mt, K) - zapoznanie się z nowym komputerem jednopłytkowym otrzymanym od Firmy
 
-22.01.2025 - spotkanie grupowe (wszy) - wszystko
+21.01.2025 - spotkanie grupowe (wszy) - wszystko 
+
+23.01.2025 - spotkanie grupowe (wszy) - umieszczenie oraz sprzęgnięcie enkoderów zliczających wykonane obroty kół, implementacja regulatora PID sterującego obrotem kół, wykonanie schematów elektrycznego oraz blokowego oraz kontynuacja uzupełniania dokumentacji, implementacja komunikacji pomiędzy STM32 a ESP32, w tym komunikacji bezprzewodowej, napisanie biblioteki do odczytu danych z żyroskopu oraz akcelerometru.
