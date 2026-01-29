@@ -48,29 +48,49 @@ Wzory:
 
 """
 
+class odometryAlgorithm:
+    def __init__ (self,
+                  dataFromAccelerator: np.array,
+                  dataFromGyroscope: np.array,
+                  dataFromEncoders: np.array,
+                  timeVec):
+        
+        self.dataFromAccelerator = dataFromAccelerator
+        self.dataFromGyroscope   = dataFromGyroscope
+        self.dataFromEncoders    = {
+                        'rightWheel' : dataFromEncoders[0],
+                         'leftWheel' : dataFromEncoders[1]
+                        }
+
+        self.timeStep = timeVec[1]-timeVec[0]
+        self.distanceLeftWheel = 0
+        self.distanceRightWheel = 0
+        self.vecTemporaryDistanceLW = np.array([])
+        self.vecTemporaryDistanceRW = np.array([])
+        self.radiusOfWheel = 5
+        self.distanceBetweenwheels = 20
+
+    def calculatePath(self):
+
+        for i in range(min(len(self.dataFromEncoders['rightWheel']),len(dataFromRightWheel))):
+            dl = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['left'][i] * timeStep
+            dr = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['right'][i] * timeStep
+            self.vecTemporaryDistanceLW = np.append(self.vecTemporaryDistanceLW,dl)
+            self.vecTemporaryDistanceRW = np.append(self.vecTemporaryDistanceRW,dr)
+
+    
+
 # Konfiguracja czasu (tak jak miałeś ostatnio)
 timeStep = 0.01
-
-# --- Etap 1: Jazda prosto (1 sekunda / 100 próbek) ---
-# Obie strony jadą z prędkością 1.0 obr/s
 left_1 = np.ones(100) * 1.0
 right_1 = np.ones(100) * 1.0
-
-# --- Etap 2: Obrót w miejscu w lewo (1.5 sekundy / 150 próbek) ---
-# Żeby obrócić się w miejscu (nie zmieniając pozycji x,y):
-# Lewe koło musi cofać (-0.5), Prawe jechać do przodu (0.5)
 left_2 = np.ones(200) * -15
 right_2 = np.ones(200) * 15
-
-# --- Etap 3: Łuk w prawo (2 sekundy / 200 próbek) ---
-# Żeby skręcać w prawo jadąc do przodu:
-# Lewe koło musi pokonywać większy dystans (zewnętrzne) niż prawe (wewnętrzne)
 left_3 = np.ones(200) * 1.5  # Szybko
 right_3 = np.ones(200) * 0.8 # Wolniej
-
-# --- Łączenie danych ---
 dataFromLeftWheel = np.concatenate([left_1, left_2, left_3])
 dataFromRightWheel = np.concatenate([right_1, right_2, right_3])
+
 dataFromAccelerator = np.array([])
 dataFromGyroscope = np.array([])
 timeStep = 0.01 #czas co jaki pobierana jest wartosc z czujników
