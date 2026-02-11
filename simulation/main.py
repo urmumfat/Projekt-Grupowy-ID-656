@@ -53,8 +53,13 @@ class odometryAlgorithm:
                   dataFromAccelerator: np.array,
                   dataFromGyroscope: np.array,
                   dataFromEncoders: np.array,
+                  startPosture,
                   timeVec):
         
+        self.posX = np.array([startPosture[0]]) #cm
+        self.posY = np.array([startPosture[1]])
+        self.phi = np.array([startPosture[2]]) #stopnie
+
         self.dataFromAccelerator = dataFromAccelerator
         self.dataFromGyroscope   = dataFromGyroscope
         self.dataFromEncoders    = {
@@ -71,12 +76,65 @@ class odometryAlgorithm:
         self.distanceBetweenwheels = 20
 
     def calculatePath(self):
-
-        for i in range(min(len(self.dataFromEncoders['rightWheel']),len(dataFromRightWheel))):
-            dl = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['left'][i] * timeStep
-            dr = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['right'][i] * timeStep
+        for i in range(min(len(self.dataFromEncoders['rightWheel']),len(self.dataFromEncoders['leftWheel']))):
+            dl = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['leftWheel'][i] * self.timeStep
+            dr = np.pi * self.radiusOfWheel * 2 * self.dataFromEncoders['rightWheel'][i] * self.timeStep
             self.vecTemporaryDistanceLW = np.append(self.vecTemporaryDistanceLW,dl)
             self.vecTemporaryDistanceRW = np.append(self.vecTemporaryDistanceRW,dr)
+        
+        for i in range(len(dataFromLeftWheel)):
+            #theta = (d_r - d_l)/b
+            theta = (self.vecTemporaryDistanceRW[i]-self.vecTemporaryDistanceLW[i])/self.distanceBetweenwheels
+            self.phi = np.append(self.phi,self.phi[i]+theta)
+
+            #d_c = (d_l +d_r)/2
+            d_c = (self.vecTemporaryDistanceRW[i]+self.vecTemporaryDistanceLW[i])/2
+
+            d_x = d_c * np.cos((self.phi[i]+theta)*(np.pi/180))
+            d_y = d_c * np.sin((self.phi[i]+theta)*(np.pi/180))
+            self.posX = np.append(self.posX,self.posX[i]+d_x)
+            self.posY = np.append(self.posY,self.posY[i]+d_y)
+
+            #print(f"postura: (x:{self.posX[i]}, y:{posY[i]}, phi:{phi[i]})",end='\n')
+
+    def visPath(self):
+        fig,ax = plt.subplots(figsize=(8,8))
+
+        margin = 20
+        ax.set_xlim(min(self.posX)-margin, max(self.posX)+margin)
+        ax.set_ylim(min(self.posY)-margin, max(self.posY)+margin)
+
+        ax.set_aspect('equal')
+        ax.grid(True)
+        ax.set_title("Wizulaziacja ruchu robota")
+        ax.set_xlabel("X [cm]")
+        ax.set_ylabel("Y [cm]")
+
+        robotPath, = ax.plot([],[],'b-',linewidth = 1, label='Ścierzka')
+        pathPoints, = ax.plot([],[],'ro',markersize = 8, label='Ścierzka')
+        robotNose, = ax.plot([],[],'r-',linewidth = 2)
+
+        plt.legend()
+
+        noseLenght = 5 #cm
+
+        def update(frame):
+
+            robotPath.set_data(self.posX[:frame], self.posY[:frame])
+            pathPoints.set_data([self.posX[frame]],[self.posY[frame]])
+
+            noseCorner = np.radians(self.phi[frame])
+
+            noseX = self.posX[frame] + noseLenght * np.cos(noseCorner)
+            noseY = self.posY[frame] + noseLenght * np.sin(noseCorner)
+
+            robotNose.set_data([self.posX[frame],noseX],[self.posY[frame],noseY])
+
+            return robotPath, pathPoints, robotNose
+
+        animation = FuncAnimation(fig,update,frames = len(self.posX),interval = 20, blit=True)
+
+        plt.show()
 
     
 
@@ -91,80 +149,15 @@ right_3 = np.ones(200) * 0.8 # Wolniej
 dataFromLeftWheel = np.concatenate([left_1, left_2, left_3])
 dataFromRightWheel = np.concatenate([right_1, right_2, right_3])
 
-dataFromAccelerator = np.array([])
-dataFromGyroscope = np.array([])
-timeStep = 0.01 #czas co jaki pobierana jest wartosc z czujników
-radiusOfWheel = 5 #cm
-distanceBetweenwheels = 20 #cm
+dataEncoders = np.array([dataFromRightWheel,dataFromLeftWheel])
 
-#wyznaczenie chwilowych zmian przemieszczenia
-distanceLeftWheel = 0
-distanceRightWheel = 0
-vecTemporaryDistanceLW = np.array([])
-vecTemporaryDistanceRW = np.array([])
+simulation = odometryAlgorithm(
+    dataFromAccelerator= None,
+    dataFromGyroscope= None,
+    dataFromEncoders= dataEncoders,
+    startPosture= [100.0,0.0,90.0],
+    timeVec= [0.0,0.01]
+)
 
-for i in range(min(len(dataFromLeftWheel),len(dataFromRightWheel))):
-    dl = np.pi * radiusOfWheel * 2 * dataFromLeftWheel[i] * timeStep
-    dr = np.pi * radiusOfWheel * 2 * dataFromRightWheel[i] * timeStep
-    vecTemporaryDistanceLW = np.append(vecTemporaryDistanceLW,dl)
-    vecTemporaryDistanceRW = np.append(vecTemporaryDistanceRW,dr)
-
-#obliczanie zmiany pozycji
-posX = np.array([100]) #cm
-posY = np.array([0])
-phi = np.array([90]) #stopnie
-
-for i in range(len(dataFromLeftWheel)):
-
-    #theta = (d_r - d_l)/b
-    theta = (vecTemporaryDistanceRW[i]-vecTemporaryDistanceLW[i])/distanceBetweenwheels
-    phi = np.append(phi,phi[i]+theta)
-
-    #d_c = (d_l +d_r)/2
-    d_c = (vecTemporaryDistanceRW[i]+vecTemporaryDistanceLW[i])/2
-
-    d_x = d_c * np.cos((phi[i]+theta)*(np.pi/180))
-    d_y = d_c * np.sin((phi[i]+theta)*(np.pi/180))
-    posX = np.append(posX,posX[i]+d_x)
-    posY = np.append(posY,posY[i]+d_y)
-
-    print(f"postura: (x:{posX[i]}, y:{posY[i]}, phi:{phi[i]})",end='\n')
-
-
-#wizulaizacjas
-fig,ax = plt.subplots(figsize=(8,8))
-
-margin = 20
-ax.set_xlim(min(posX)-margin, max(posX)+margin)
-ax.set_ylim(min(posY)-margin, max(posY)+margin)
-
-ax.set_aspect('equal')
-ax.grid(True)
-ax.set_title("Wizulaziacja ruchu robota")
-ax.set_xlabel("X [cm]")
-ax.set_ylabel("Y [cm]")
-
-robotPath, = ax.plot([],[],'b-',linewidth = 1, label='Ścierzka')
-pathPoints, = ax.plot([],[],'ro',markersize = 8, label='Ścierzka')
-robotNose, = ax.plot([],[],'r-',linewidth = 2)
-
-plt.legend()
-
-def update(frame):
-
-    robotPath.set_data(posX[:frame], posY[:frame])
-    pathPoints.set_data([posX[frame]],[posY[frame]])
-
-    noseLenght = 5 #cm
-    noseCorner = np.radians(phi[frame])
-
-    noseX = posX[frame] + noseLenght * np.cos(noseCorner)
-    noseY = posY[frame] + noseLenght * np.sin(noseCorner)
-
-    robotNose.set_data([posX[frame],noseX],[posY[frame],noseY])
-
-    return robotPath, pathPoints, robotNose
-
-animation = FuncAnimation(fig,update,frames = len(posX),interval = 20, blit=True)
-
-plt.show()
+simulation.calculatePath()
+simulation.visPath()
