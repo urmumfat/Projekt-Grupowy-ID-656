@@ -1,48 +1,79 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-#parameters of engine
-To = 0.1 #seconds
-Ko = 0.1 #m/sV
+"""
+Wartośc zadan to prędkość obrotowa podana w jednotsce rpm - rotations per minute
 
-#zadajnik
-Vmax = 1#m/s
-Kz = 255
+Podajemy tą wartość na regulator PID który zamienia ją na odpowiednie wypełnienie
 
-#regulator
-Vss = 12#V
-Vdrop = 2#V
-Kp = (Vss - Vdrop)/255 
+Obiekt sterowany to połaczenie motor driver i silnika, zamienia wypelnienia na odpowiednia wyjściową predkość obrotwą
 
-#czujnik
-Kt = 0.255#s/m
+Poprzrz sprzężenie zwrotne wyjscia z wejściem uzyskujemy uchyb podawany na regulator PID
+"""
 
-#symulation
-timeSpace = np.linspace(0,0.99,100)
-dt = 0.01
+#obiekt
+Vmax = 60 #[rpm]
+pwmDuty = 255.0 #max wypelnienie
+Ko = Vmax/pwmDuty
+To = 0.1 #[s]
 
-R = 0.5#m/s
-Y = [0]
-#zakladamy ze U(s) jest skokiem jednostkowym
+#controler
+Kc = 12
+Ti = 0.011
+Td = 0.001
+alfa = 0.0 #wpsolcznniki filatr czlonu D
 
-for t in timeSpace:
+#sim paremeters
+dT = 0.0001
+timeSpace = np.arange(0,3,dT)
+R = 60
+Y = np.zeros(len(timeSpace))
+U = np.zeros(len(timeSpace))
+Ui = 0.0
+Ud = 0.0
+errorPrev = 0
 
-    yPrev = Y[-1]
+for i in range(len(timeSpace)):
 
-    r = Kz * R
+    error = R - Y[i]
 
-    error = r - Kt*yPrev
+    Uk = Kc * error
 
-    u = error*Kp
+    if Ti == 0: dUi = 0
+    else: dUi = error * dT / Ti
+    
+    if i == 0 : Ud = 0
+    elif alfa == 0:
+        Ud = (Td * (error - errorPrev)) / dT
+    elif Td != 0 and alfa != 0:
+            dUd = ((Td * (error - errorPrev)/dT - Ud) / alfa) * dT
+            Ud += dUd
 
-    dy = (Ko*u - yPrev)*dt/To
+    if 0 < (Ud + Uk + (Ui + dUi)) < 255:
+        Ui += dUi
 
-    Y.append(yPrev+dy)
+    errorPrev = error
 
-Y = Y[-len(timeSpace):]
+    Ut = max(0,min(255,(Uk + Ui + Ud)))
 
-plt.figure(figsize=(12,8))
-plt.plot(timeSpace,Y)
+    U[i] = Ut
 
+    dY = (Ko*Ut - Y[i]) / To * dT
+
+    if i < len(timeSpace)-1 : Y[i+1] = Y[i] + dY
+
+
+plt.figure(figsize=(12,10))
+plt.subplot(2,1,1)
+plt.plot(timeSpace,Y[-len(timeSpace):])
+plt.title(r"$y(t)$")
+plt.xlabel('time [s]')
+plt.ylabel(r'Prędkość [rpm]')
+plt.grid()
+plt.subplot(2,1,2)
+plt.plot(timeSpace,U)
+plt.title(r'$u(t)$')
+plt.xlabel('time [s]')
+plt.ylabel('PWM')
 plt.grid()
 plt.show()
