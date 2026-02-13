@@ -20,7 +20,7 @@ To = 0.1 #[s]
 #controler
 Kc = 12
 Ti = 0.011
-Td = 0.001
+Td = 0.01
 alfa = 0.0 #wpsolcznniki filatr czlonu D
 
 #sim paremeters
