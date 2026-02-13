@@ -84,6 +84,14 @@ int clamp(int value, int min, int max) {
     return value;
 }
 
+void pwm(int t2, int t4, int t8, int t17){
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, t2);
+	__HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, t17);
+	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, t4);
+	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, t8);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -146,10 +154,10 @@ int main(void)
 	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
 	__HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);
 
-    for (int i = 300; i <= pwm_base; i += 10) {
+    for (int i = 500; i <= pwm_base; i += 10) {
           __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, i);
           __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, i);
-          HAL_Delay(10);
+          HAL_Delay(100);
      }
 
     uint32_t prev_czas = 0;
@@ -192,7 +200,7 @@ int main(void)
 				{
 	  		        if (robot_state=='0')   //prosto
 	  		        {
-	  		            // Oblicz PI
+	  		            // PI
 	  		            int speed1 = licznik1 - prev_licznik1;
 	  		            int speed2 = licznik2 - prev_licznik2;
 	  		            prev_licznik1 = licznik1;
@@ -215,10 +223,7 @@ int main(void)
 	  		            pwm1 = clamp(pwm1, 0, 1000);
 	  		            pwm2 = clamp(pwm2, 0, 1000);
 
-	  		            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwm2);
-	  		            __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, pwm1);
-	  		            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-	  		            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
+	  		            pwm(pwm2, 0, 0, pwm1);
 
 	  		            buff=1;
 
@@ -236,10 +241,7 @@ int main(void)
 					  }
 					  else
 					  {
-						  __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 850);
-						  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 850);
-						  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0);
-						  __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
+						  pwm(0, 800, 0, 800);
 						  buff=0;
 					  }
 				  }
@@ -258,19 +260,13 @@ int main(void)
 					  }
 					  else
 					  {
-						  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 850);
-						  __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 850);
-						  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-						  __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);
+						  pwm(800, 0, 800, 0);
 						  buff=0;
 					  }
 				  }
 				  else if (robot_state == '3') //stop
 				  {
-					  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0);
-					  __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);
-					  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-					  __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
+					  pwm(0,0,0,0);
 					  buff=1;
 
 				  }
@@ -290,10 +286,7 @@ int main(void)
 	  			silniki_wlaczane = !silniki_wlaczane;
 
 	  			if (!silniki_wlaczane) {
-	  				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0);
-	  				__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-	  				__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, pwm1);
-	  				__HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, pwm2);
+	  				pwm(pwm2, 0, 0, pwm1);
 	  			} else {
 	  				prev_licznik1 = licznik1;
 	  				prev_licznik2 = licznik2;
