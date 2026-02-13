@@ -1,7 +1,5 @@
 TO DO:
-- co zrobić z tym jebanym sterownikiem kurwa nasza w te i nazad
-
-
+- dodać link do gita do dokumentacji
 
 
 
