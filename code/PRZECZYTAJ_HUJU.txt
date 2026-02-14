@@ -1,0 +1,1 @@
+w ioc zmieniam piny PA12 i PA11 na GPIO EXTI, user label zrob takie jak były. W system core i GPIO ustawiam External interrupt Mode Rising/Falling edge dla obu pinów i w system core, gpio, nvic zaznaczasz enable interrupt
