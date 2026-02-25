@@ -58,6 +58,10 @@ int pwm2 = 800;
 static float calka = 0.0;
 static float Kp = 20.0;
 static float Ki = 0.15;
+static float Kd = 2.0;
+#define BUFF_SIZE 5
+float uchyb_buff[BUFF_SIZE] = {0};
+int buf_idx = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,6 +95,15 @@ void pwm(int t2, int t4, int t8, int t17){
 	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, t8);
 
 }
+
+void ruszanie(){
+	for (int i = 600; i <= pwm_base; i += 10) {
+	          pwm(i,0,0,i);
+	          HAL_Delay(100);
+	     }
+}
+
+
 
 /* USER CODE END 0 */
 
@@ -149,24 +162,15 @@ int main(void)
     HAL_TIM_PWM_Start(&htim17, TIM_CHANNEL_1);
 
 	// Upewniamy się, że na starcie silniki stoją
-	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0);
-	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 0);
-	__HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, 0);
+	pwm(0,0,0,0);
 
-    for (int i = 500; i <= pwm_base; i += 10) {
-          __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, i);
-          __HAL_TIM_SET_COMPARE(&htim17, TIM_CHANNEL_1, i);
-          HAL_Delay(100);
-     }
+	ruszanie();
 
     uint32_t prev_czas = 0;
     int prev_licznik1 = 0;
     int prev_licznik2 = 0;
     int buff=0;
     //int robot_state = 0;
-
-
      GPIO_PinState pop_stan1 = GPIO_PIN_RESET;
      GPIO_PinState pop_stan2 = GPIO_PIN_RESET;
      GPIO_PinState btn_prev = GPIO_PIN_SET;
@@ -183,30 +187,25 @@ int main(void)
 
 
 
-	  // enkodery
-	  	  GPIO_PinState akt_stan1 = HAL_GPIO_ReadPin(enkoder1_in_GPIO_Port, enkoder1_in_Pin);
-	  	  if (akt_stan1 == GPIO_PIN_SET && pop_stan1 == GPIO_PIN_RESET) licznik1++;
-	  	  pop_stan1 = akt_stan1;
-
-	  	  GPIO_PinState akt_stan2 = HAL_GPIO_ReadPin(enkoder2_in_GPIO_Port, enkoder2_in_Pin);
-	  	  if (akt_stan2 == GPIO_PIN_SET && pop_stan2 == GPIO_PIN_RESET) licznik2++;
-	  	  pop_stan2 = akt_stan2;
-
-	        // algorytm PI co 50ms
-	  	if (HAL_GetTick() - prev_czas >= 10)
+	        // algorytm PI co 10ms
+	  	if (HAL_GetTick() - prev_czas >= 50)
 	  		  {
 	  		    prev_czas = HAL_GetTick();
 				if (silniki_wlaczane)
 				{
 	  		        if (robot_state=='0')   //prosto
 	  		        {
+
+	  		        	if(buff==0){
+	  		        		ruszanie();
+	  		        	}
 	  		            // PI
-	  		            int speed1 = licznik1 - prev_licznik1;
-	  		            int speed2 = licznik2 - prev_licznik2;
+	  		            float speed1 = licznik1 - prev_licznik1;
+	  		            float speed2 = licznik2 - prev_licznik2;
 	  		            prev_licznik1 = licznik1;
 	  		            prev_licznik2 = licznik2;
 
-	  		            int uchyb = speed1 - speed2;
+	  		            float uchyb = speed1 - speed2;
 	  		            float P = uchyb * Kp;
 	  		            calka += uchyb;
 
@@ -215,7 +214,16 @@ int main(void)
 	  		            if (calka < -1000) calka = -1000;
 
 	  		            float I = calka * Ki;
-	  		            int korekcja = (int)(P + I);
+
+	  		            uchyb_buff[buf_idx]=(float)uchyb;
+	  		            int oldest_idx=(buf_idx+1)%BUFF_SIZE;
+	  		            float stary_uchyb=uchyb_buff[oldest_idx];
+	  		            float rozniczka=(uchyb-stary_uchyb)/((BUFF_SIZE-1)*0.01f);
+	  		            buf_idx=oldest_idx;
+
+	  		            float D=rozniczka*Kd;
+
+	  		            int korekcja = (int)(P + I+D);
 
 	  		            pwm1 = pwm_base - korekcja;
 	  		            pwm2 = pwm_base + korekcja;
@@ -272,10 +280,6 @@ int main(void)
 				  }
 				}
 	  		  }
-	  		  else
-			  {
-			    calka = 0;
-			  }
 
 
 
@@ -700,9 +704,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : enkoder2_in_Pin enkoder1_in_Pin */
   GPIO_InitStruct.Pin = enkoder2_in_Pin|enkoder1_in_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -710,7 +718,35 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    // Czas blokady w milisekundach.
+    // Przy tarczy 20 szczelin i 3000 obr/min (50Hz),
+    // impulsy pojawiają się co ok. 1ms. Ustawiamy filtr na 0.5ms - 1ms.
+    const uint32_t debounce_time = 1;
 
+    static uint32_t last_time1 = 0;
+    static uint32_t last_time2 = 0;
+
+    uint32_t current_time = HAL_GetTick();
+
+    if (GPIO_Pin == enkoder1_in_Pin)
+    {
+        if (current_time - last_time1 >= debounce_time)
+        {
+            licznik1++;
+            last_time1 = current_time;
+        }
+    }
+    else if (GPIO_Pin == enkoder2_in_Pin)
+    {
+        if (current_time - last_time2 >= debounce_time)
+        {
+            licznik2++;
+            last_time2 = current_time;
+        }
+    }
+}
 /* USER CODE END 4 */
 
 /**
