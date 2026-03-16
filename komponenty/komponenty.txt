@@ -16,7 +16,7 @@ Komponenty główne:
 	L298N 
 	- https://botland.com.pl/sterowniki-silnikow-moduly/3164-l298n-dwukanalowy-sterownik-silnikow-modul-12v-2a-5904422359317.html
 
-4. Chassis Round 2WD (podstawek i kułka)
+4. Chassis Round 2WD
 	https://botland.com.pl/podwozia-robotow/7243-chassis-round-2wd-2-kolowe-podwozie-robota-z-napedem-5904422310028.html
 
 5. Waveshare Ups Module 3S Eu Moduł Zasilacza Bezprzerwowego Ups

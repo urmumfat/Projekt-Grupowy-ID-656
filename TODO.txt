@@ -1,7 +1,5 @@
 TO DO:
-- wyszukać cokolwiek więcej odnośnie kamerek
-
-
+- dodać link do gita do dokumentacji
 
 
 
