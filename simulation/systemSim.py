@@ -26,7 +26,7 @@ alfa = 0.0 #wpsolcznniki filatr czlonu D
 #sim paremeters
 dT = 0.0001
 timeSpace = np.arange(0,3,dT)
-R = 60
+R = 20
 Y = np.zeros(len(timeSpace))
 U = np.zeros(len(timeSpace))
 Ui = 0.0
