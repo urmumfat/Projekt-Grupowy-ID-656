@@ -29,3 +29,16 @@
 21.01.2025 - spotkanie grupowe (wszy) - wszystko 
 
 23.01.2025 - spotkanie grupowe (wszy) - umieszczenie oraz sprzęgnięcie enkoderów zliczających wykonane obroty kół, implementacja regulatora PID sterującego obrotem kół, wykonanie schematów elektrycznego oraz blokowego oraz kontynuacja uzupełniania dokumentacji, implementacja komunikacji pomiędzy STM32 a ESP32, w tym komunikacji bezprzewodowej, napisanie biblioteki do odczytu danych z żyroskopu oraz akcelerometru.
+
+[...]
+maile od arex
+
+04.03.2026 - spotkanie grupowe (A, Mt) - ...
+
+11.03.2026 - spotkanie grupowe (A, Mt) - pisanie kodu stm32
+
+25.03.2026 - spotkanie grupowe (A, Mt) - instalacja i konfiguracja linuxa i środowiska ros2 na laptopie do zdalnego sterowania
+
+30.03.2026 - spotkanie grupowe (A, Mt) - skonfigurowanie zdalnego połączenia ros2 na dwóch komputerach
+
+01.04.2026 - spotkanie grupowe (A, Mt) - zlutowanie nowych silników z enkoderami, podłączanie ich do nowej platformy, opracowanie nowego schematu podłączeń elektrycznych, praca nad sterowaniem lidarem ze zdalnego komputera
