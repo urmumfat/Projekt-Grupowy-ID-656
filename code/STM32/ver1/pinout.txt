@@ -27,4 +27,7 @@ PC5 - USART3_RX
 GPIO:
 gpio input:
 PC13 - B1
-
+gpio output:
+PC4 - D1
+PC5 - D2
+PC6 - D3
