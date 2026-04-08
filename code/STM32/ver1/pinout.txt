@@ -28,6 +28,6 @@ GPIO:
 gpio input:
 PC13 - B1
 gpio output:
-PC4 - D1
-PC5 - D2
-PC6 - D3
+PC1 - D1
+PC2 - D2
+PC3 - D3
