@@ -48,7 +48,7 @@
 
 /* USER CODE BEGIN PV */
 
-int pwm_base = 800;   // Bazowa prędkość (0-1000)
+int pwm_base = 900;   // Bazowa prędkość (0-1000)
 
 float Kp = 25.0;      // Wzmocnienie proporcjonalne
 float Ki = 0.2;       // Wzmocnienie całkujące
@@ -59,6 +59,10 @@ int16_t prev_licznik2 = 0;
 int32_t prev_czas = 0;
 
 char robot_state = '0'; // '0'-prosto, '1'-prawo, '2'-lewo, '3'-stop
+
+volatile int16_t current_cnt1, current_cnt2;
+volatile int16_t speed1, speed2;
+volatile float uchyb;
 
 /* USER CODE END PV */
 
@@ -159,12 +163,12 @@ int main(void)
 	            prev_czas = HAL_GetTick();
 
 	            // POBIERANIE DANYCH Z ENKODERÓW
-	            int16_t current_cnt1 = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
-	            int16_t current_cnt2 = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+	            current_cnt1 = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
+	            current_cnt2 = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
 
 	            // OBLICZENIE PRĘDKOŚCI
-	            int16_t speed1 = current_cnt1 - prev_licznik1; // Rzutowanie danych na int16_t - aby poprawnie liczyć różnicę przy przepełnieniu licznika
-	            int16_t speed2 = current_cnt2 - prev_licznik2;
+	            speed1 = current_cnt1 - prev_licznik1; // Rzutowanie danych na int16_t - aby poprawnie liczyć różnicę przy przepełnieniu licznika
+	            speed2 = -(current_cnt2 - prev_licznik2);
 
 	            prev_licznik1 = current_cnt1;
 	            prev_licznik2 = current_cnt2;
@@ -185,19 +189,23 @@ int main(void)
 					int p1 = clamp(pwm_base - korekcja, 0, 1000);
 					int p2 = clamp(pwm_base + korekcja, 0, 1000);
 
-					pwm(p1, 0, 0, p2);
+					pwm(p1, 0, p2, 0);
 				}
 				else if (robot_state == '1') // PRAWO
 				{
-					pwm(0, 800, 0, 800);
+					pwm(800, 0, 0, 800);
 				}
 				else if (robot_state == '2') // LEWO
 				{
-					pwm(800, 0, 800, 0);
+					pwm(0, 800, 800, 0);
 				}
 				else if (robot_state == '3') // STOP
 				{
 					pwm(0,0,0,0);
+				}
+				else if (robot_state == '4') // JAZDA DO TYLU
+				{
+					pwm(0, 800, 0, 800);
 				}
 
 	        }
