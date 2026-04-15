@@ -58,7 +58,7 @@ int16_t prev_licznik1 = 0;
 int16_t prev_licznik2 = 0;
 int32_t prev_czas = 0;
 
-char robot_state = '0'; // '0'-prosto, '1'-prawo, '2'-lewo, '3'-stop
+char robot_state = '0';		// '0'-prosto, '1'-prawo, '2'-lewo, '3'-stop
 
 volatile int16_t current_cnt1, current_cnt2;
 volatile int16_t speed1, speed2;
