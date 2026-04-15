@@ -1,1 +1,3 @@
-ver1 : jazda w różne kierunki na nowych silnikach i enkoderach
+sterowanieESP: jazda w kierunki zadane poprzez ESP32 z wykorzystaniem stałych silników i enkoderów
+ver1: sterowanie ruchem i skręcanie z wykorzystaniem nowych silników i enkoderów
+ver2: algorytm jazdy wykorzystujący zadane wartości prędkości kątowej i liniowej - zgodnie z ramką twist obieraną przerwaniami przez UART
