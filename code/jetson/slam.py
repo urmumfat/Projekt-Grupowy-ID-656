@@ -52,11 +52,15 @@ def generate_launch_description():
             {'map_frame': 'map'},
             {'base_frame': 'base_link'},
             {'scan_topic': '/scan'},
-            {'mode': 'mapping'}
+            {'mode': 'mapping'},
+	    {'minimum_travel_distance': 0.15}, # Aktualizuj co 15 cm (domyślnie 0.5)
+            {'minimum_travel_heading': 0.2},   # Aktualizuj przy obrocie o ~11 stopni (domyślnie 0.5 rad)
+            {'map_update_interval': 2.0},      # Wysyłaj mapę do RViza co 2 sekundy (domyślnie 5.0)
+            {'resolution': 0.01}
         ]
     )
 
-"""
+    
     # 5. RViz
     rviz = Node(
         package='rviz2',
@@ -65,7 +69,7 @@ def generate_launch_description():
         arguments=['-d', '/my_robot_code/my_robot_code/slam_config.rviz'],
         output='screen'
     )
-"""
+    
 
 
     # 6. Automatyczne nagrywanie (rosbag)
@@ -74,11 +78,26 @@ def generate_launch_description():
         output='screen'
     )
 
+    """
+    # 7. Rejestrator trasy (nowy węzeł)
+    path_plotter = ExecuteProcess(
+        cmd=['python3','/my_robot_code/my_robot_code/path_plotter.py'],
+        output='screen'
+    )
+    """
+    
+    # 8. Mostek UART
+    uart_bridge = ExecuteProcess(
+	cmd=['python3','/my_robot_code/my_robot_code/uart_bridge.py'],
+	output='screen'
+    )
+    
     return LaunchDescription([
         tf_base_to_laser,
         lidar_launch,
         rf2o_node,
         slam_toolbox,
-        #rviz,
-        record_bag
+	rviz,
+        record_bag,
+        uart_bridge
     ])
